@@ -1,0 +1,35 @@
+export class AppError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode: number = 500,
+    public readonly code: string = "INTERNAL_ERROR"
+  ) {
+    super(message);
+    this.name = this.constructor.name;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(entity: string, id?: number | string) {
+    super(`${entity}${id ? ` with id ${id}` : ""} not found`, 404, "NOT_FOUND");
+  }
+}
+
+export class ValidationError extends AppError {
+  constructor(message: string) {
+    super(message, 400, "VALIDATION_ERROR");
+  }
+}
+
+export class ConflictError extends AppError {
+  constructor(message: string) {
+    super(message, 409, "CONFLICT");
+  }
+}
+
+export class CircuitBreakerOpenError extends AppError {
+  constructor(service: string) {
+    super(`Circuit breaker is OPEN for ${service}`, 503, "CIRCUIT_BREAKER_OPEN");
+  }
+}
