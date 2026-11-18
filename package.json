@@ -1,0 +1,41 @@
+{
+  "name": "design-patterns-backend",
+  "version": "1.0.0",
+  "description": "Express backend demonstrating 10 design patterns at a basic level",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "tsx src/database/seed.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": ["express", "design-patterns", "typescript", "prisma"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "prisma": "^5.14.0",
+    "@prisma/client": "^5.14.0",
+    "dotenv": "^16.4.5",
+    "winston": "^3.13.0",
+    "class-validator": "^0.14.1",
+    "class-transformer": "^0.5.1",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^20.14.0",
+    "@types/jest": "^29.5.12",
+    "tsx": "^4.15.0",
+    "typescript": "^5.5.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.5",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^6.3.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
