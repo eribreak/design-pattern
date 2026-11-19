@@ -1,5 +1,4 @@
 import { BaseUserDecorator } from "./BaseDecorator";
-import { IUser } from "./IUser";
 import { User } from "@prisma/client";
 import { logger } from "../../shared/logger";
 import { redis } from "../../cache/RedisCache";

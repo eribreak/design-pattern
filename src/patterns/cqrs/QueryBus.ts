@@ -1,6 +1,6 @@
 type QueryHandler<T extends Query = Query, R = unknown> = (query: T) => Promise<R>;
 
-export interface Query<T = unknown> {
+export interface Query {
   type: string;
 }
 

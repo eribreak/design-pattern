@@ -8,7 +8,7 @@ export class CreditCardStrategy implements IPaymentStrategy {
     return {
       success: true,
       transactionId: `cc_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-      message: "Credit card payment processed successfully",
+      message: `Credit card payment of ${amount} processed successfully`,
     };
   }
 
@@ -33,7 +33,7 @@ export class PayPalStrategy implements IPaymentStrategy {
     return {
       success: true,
       transactionId: `pp_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-      message: "PayPal payment processed successfully",
+      message: `PayPal payment of ${amount} processed successfully`,
     };
   }
 
@@ -58,7 +58,7 @@ export class CryptoStrategy implements IPaymentStrategy {
     return {
       success: true,
       transactionId: `crypto_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-      message: "Crypto payment processed successfully (simulated)",
+      message: `Crypto payment of ${amount} processed successfully (simulated)`,
     };
   }
 

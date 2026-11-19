@@ -16,7 +16,7 @@ export class SingletonController {
   }
 
   async getLoggerInfo(req: Request, res: Response): Promise<Response> {
-    const logger = Logger.getInstance();
+    const _logger = Logger.getInstance();
     return res.json({
       success: true,
       message: "Logger instance accessed (Singleton)",
