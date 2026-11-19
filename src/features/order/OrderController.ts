@@ -4,11 +4,10 @@ import { OrderRepository } from "../../patterns/repository/OrderRepository";
 import { PaymentRepository } from "../../patterns/repository/PaymentRepository";
 import { CreateOrderDto, UpdateOrderDto, OrderResponse, OrderStatus } from "./dto";
 import { OrderFactory } from "../../patterns/factory/OrderFactory";
-import { calculateTotal } from "../../shared/utils";
 
 const orderRepository = new OrderRepository(prisma);
-const paymentRepository = new PaymentRepository(prisma);
-const orderFactory = new OrderFactory();
+const _paymentRepository = new PaymentRepository(prisma);
+const _orderFactory = new OrderFactory();
 
 function mapToOrderResponse(order: any): OrderResponse {
   return {

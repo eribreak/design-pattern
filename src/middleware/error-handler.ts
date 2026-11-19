@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError, ValidationError } from "../shared/errors";
+import { AppError } from "../shared/errors";
 import { logger } from "../shared/logger";
 
 export function errorHandler(

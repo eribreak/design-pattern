@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { PaymentGatewayFactory, StripeAdapter, PayPalAdapter, MockAdapter } from "./adapters";
+import { PaymentGatewayFactory, StripeAdapter, PayPalAdapter } from "./adapters";
 import { prisma } from "../../database/client";
 import { PaymentRepository } from "../../patterns/repository/PaymentRepository";
 import { PaymentStatus } from "../../features/payment/dto";

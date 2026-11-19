@@ -5,7 +5,7 @@ import { CreateUserDto, UpdateUserDto, UserResponse } from "./dto";
 import { UserFactory } from "../../patterns/factory/UserFactory";
 
 const userRepository = new UserRepository(prisma);
-const userFactory = new UserFactory();
+const _userFactory = new UserFactory();
 
 function toUserResponse(user: any): UserResponse {
   return {

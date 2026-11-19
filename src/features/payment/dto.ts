@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsOptional, IsEnum } from "class-validator";
+import { IsNumber, IsOptional, IsEnum } from "class-validator";
 
 export enum PaymentMethod {
   CREDIT_CARD = "CREDIT_CARD",

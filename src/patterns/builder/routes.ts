@@ -1,15 +1,9 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { BuilderDirector } from "./BuilderDirector";
 import { prisma } from "../../database/client";
-import { UserFactory } from "../factory/UserFactory";
-import { ProductFactory } from "../factory/ProductFactory";
-import { OrderFactory } from "../factory/OrderFactory";
 
 const router = Router();
 const director = new BuilderDirector();
-const userFactory = new UserFactory();
-const productFactory = new ProductFactory();
-const orderFactory = new OrderFactory();
 
 export class BuilderController {
   async buildUser(req: Request, res: Response, next: NextFunction): Promise<void> {
