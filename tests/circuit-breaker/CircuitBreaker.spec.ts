@@ -21,19 +21,19 @@ describe("Circuit Breaker Pattern", () => {
   describe("OPEN state (failure protection)", () => {
     it("should open after threshold failures", async () => {
       // First failure
-      await expect(breaker.execute(() => Promise.throw(new Error("fail")))).rejects.toThrow("fail");
+      await expect(breaker.execute(() => Promise.reject(new Error("fail")))).rejects.toThrow("fail");
       expect(breaker.getFailureCount()).toBe(1);
       expect(breaker.getState()).toBe(CircuitState.CLOSED);
 
       // Second failure - should open
-      await expect(breaker.execute(() => Promise.throw(new Error("fail")))).rejects.toThrow("fail");
+      await expect(breaker.execute(() => Promise.reject(new Error("fail")))).rejects.toThrow("fail");
       expect(breaker.getFailureCount()).toBe(2);
       expect(breaker.getState()).toBe(CircuitState.OPEN);
     });
 
     it("should reject immediately when open", async () => {
       // Force open state
-      (breaker as any).failureCount = 3;
+      (breaker as any).state = CircuitState.OPEN;
       (breaker as any).lastFailureTime = Date.now();
 
       await expect(breaker.execute(async () => "success")).rejects.toThrow("OPEN");
