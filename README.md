@@ -2,6 +2,8 @@
 
 A TypeScript Express backend demonstrating 10 design patterns at a foundational level.
 
+[![CI](https://github.com/eribreak/design-pattern/actions/workflows/ci.yml/badge.svg)](https://github.com/eribreak/design-pattern/actions/workflows/ci.yml)
+
 ## 📚 Design Patterns Covered
 
 | # | Pattern | Purpose |
@@ -119,6 +121,10 @@ Each pattern has detailed documentation in `docs/patterns/`:
 | `npm run start` | Production server |
 | `npm run seed` | Seed test data |
 | `npm test` | Run tests |
+| `npm run test:coverage` | Run tests with coverage report |
+| `npm run lint` | Lint with ESLint |
+| `npm run lint:fix` | Lint and auto-fix |
+| `npm run typecheck` | Type-check without emitting |
 
 ## 🐳 Docker
 
