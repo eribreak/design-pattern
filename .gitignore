@@ -23,6 +23,7 @@ pnpm-debug.log*
 
 # Prisma
 prisma/*.db
+prisma/generated/
 
 # Docker
 .docker/
