@@ -1,0 +1,461 @@
+<title>Design Patterns Backend</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap">
+<style>
+:root{
+  /* Palette: cool slate ground, teal accent, one hue per pattern group */
+  --bg:#f6f8f9; --surface:#ffffff; --fg:#182029; --muted:#5a6673; --line:#dfe5ea;
+  --accent:#0f766e; --accent-ink:#0b544e; --on-accent:#ffffff; --accent-soft:#d9f0ec;
+  --c-create:#9a5b06;  --c-create-bg:#fbeed8;
+  --c-struct:#4545b8;  --c-struct-bg:#e4e4fa;
+  --c-behave:#1d7a3a;  --c-behave-bg:#dcf2e2;
+  --c-data:#0a6392;    --c-data-bg:#dceefb;
+  --c-system:#b02a63;  --c-system-bg:#fbdde9;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f141a; --surface:#161d26; --fg:#e6edf3; --muted:#94a2b1; --line:#2a3440;
+    --accent:#55c8b4; --accent-ink:#8fdccd; --on-accent:#0b1513; --accent-soft:#12322d;
+    --c-create:#f0b45f; --c-create-bg:#2e2415;
+    --c-struct:#9fa8f2; --c-struct-bg:#22243f;
+    --c-behave:#72ce8c; --c-behave-bg:#172b1e;
+    --c-data:#6bc1ef;  --c-data-bg:#152b3c;
+    --c-system:#ef83b4; --c-system-bg:#33182a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f141a; --surface:#161d26; --fg:#e6edf3; --muted:#94a2b1; --line:#2a3440;
+  --accent:#55c8b4; --accent-ink:#8fdccd; --on-accent:#0b1513; --accent-soft:#12322d;
+  --c-create:#f0b45f; --c-create-bg:#2e2415;
+  --c-struct:#9fa8f2; --c-struct-bg:#22243f;
+  --c-behave:#72ce8c; --c-behave-bg:#172b1e;
+  --c-data:#6bc1ef;  --c-data-bg:#152b3c;
+  --c-system:#ef83b4; --c-system-bg:#33182a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 56px;
+}
+.wrap{max-width:1080px;margin-inline:auto}
+header h1{
+  font-family:'Space Grotesk',sans-serif; font-weight:700;
+  font-size:clamp(26px,4.5vw,38px); margin:0 0 10px; text-wrap:balance; letter-spacing:-0.01em;
+}
+.lede{margin:0;max-width:65ch;color:var(--muted);font-size:15.5px}
+.meta{margin-top:14px;font-size:13px;color:var(--muted)}
+.meta code{font:12px ui-monospace,Menlo,Consolas,monospace;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+h2{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:22px;margin:44px 0 6px;text-wrap:balance}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px;max-width:70ch}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 20px;align-items:center}
+.chip{
+  font:600 13px 'Inter',sans-serif;padding:6px 14px;border-radius:999px;
+  border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;
+}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.ghost{background:none;border:1px solid var(--line);color:var(--muted);margin-left:auto}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0;
+}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:18px;margin:0;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.num{font:600 11px/1 'Inter',sans-serif;color:var(--muted);letter-spacing:.05em;font-variant-numeric:tabular-nums}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.t-create{color:var(--c-create);background:var(--c-create-bg)}
+.t-struct{color:var(--c-struct);background:var(--c-struct-bg)}
+.t-behave{color:var(--c-behave);background:var(--c-behave-bg)}
+.t-data{color:var(--c-data);background:var(--c-data-bg)}
+.t-system{color:var(--c-system);background:var(--c-system-bg)}
+.card .lead{margin:0;font-size:14px}
+.k{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 0 0}
+ul{margin:4px 0 0;padding-left:18px;font-size:13.5px;color:var(--muted)}
+ul li{margin:3px 0}
+ul li::marker{color:var(--accent)}
+.sig{
+  font:12.5px ui-monospace,Menlo,Consolas,monospace;color:var(--accent-ink);
+  background:var(--accent-soft);border-radius:8px;padding:8px 10px;
+  overflow-x:auto;white-space:pre;margin:0;max-width:100%;
+}
+.warn{font-size:12.5px;color:var(--c-system);margin:0}
+details{border-top:1px solid var(--line);padding-top:10px;margin-top:auto}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent)}
+details .tablewrap,details ul{margin-top:10px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top;min-width:0}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td code{font:12px ui-monospace,Menlo,Consolas,monospace}
+td .m{font:600 12px ui-monospace,Menlo,Consolas,monospace;color:var(--c-data)}
+tbody .p{font-weight:600;white-space:nowrap}
+tbody .arrow{color:var(--muted)}
+.foot{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.foot code{font:12px ui-monospace,Menlo,Consolas,monospace;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.diagram{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;align-items:start}
+.split .cfg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 16px 14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1>Design Patterns Backend</h1>
+  <p class="lede">Bảng tra cứu trực quan 10 design pattern được cài đặt trong dự án này. Mỗi thẻ cho biết: pattern giải quyết vấn đề gì, khi nào nên dùng, chữ ký code đặc trưng, và tài liệu + mã nguồn nằm ở đâu.</p>
+  <p class="meta"><code>TypeScript · Express · Prisma</code> — chi tiết đầy đủ trong <code>docs/patterns/01–10</code>, mã nguồn mẫu trong <code>src/patterns/</code>.</p>
+</header>
+
+<div class="chips" role="group" aria-label="Lọc theo nhóm pattern">
+  <button class="chip" data-group="all" aria-pressed="true">Tất cả</button>
+  <button class="chip" data-group="create" aria-pressed="false">Sáng tạo</button>
+  <button class="chip" data-group="struct" aria-pressed="false">Cấu trúc</button>
+  <button class="chip" data-group="behave" aria-pressed="false">Hành vi</button>
+  <button class="chip" data-group="data" aria-pressed="false">Dữ liệu</button>
+  <button class="chip" data-group="system" aria-pressed="false">Hệ thống</button>
+  <button class="chip ghost" id="toggleAll">Mở hết chi tiết</button>
+</div>
+
+<div class="grid" id="grid">
+
+  <article class="card" data-group="data" id="repository">
+    <h3><span class="num">01</span> Repository <span class="tag t-data">Dữ liệu</span></h3>
+    <p class="lead">Đứng giữa tầng domain và tầng truy cập dữ liệu, cung cấp giao diện dạng bộ sưu tập (find, add, remove) để làm việc với đối tượng domain.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Tách business logic khỏi logic truy cập dữ liệu</li>
+      <li>Đổi nguồn dữ liệu (SQL, NoSQL, API) không đụng tới domain</li>
+      <li>Mock repository cho unit test; hỗ trợ Unit of Work</li>
+    </ul>
+    <p class="sig">interface IUserRepository ← class UserRepository(prisma)</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">GET</td><td><code>/api/users</code></td><td>Danh sách user</td></tr>
+        <tr><td class="m">GET</td><td><code>/api/users/:id</code></td><td>User theo ID</td></tr>
+        <tr><td class="m">POST</td><td><code>/api/users</code></td><td>Tạo user</td></tr>
+        <tr><td class="m">PUT</td><td><code>/api/users/:id</code></td><td>Cập nhật</td></tr>
+        <tr><td class="m">DELETE</td><td><code>/api/users/:id</code></td><td>Xóa</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/repository/interfaces.ts</code></li>
+        <li><code>src/patterns/repository/UserRepository.ts</code>, <code>ProductRepository.ts</code></li>
+        <li><code>src/features/user/UserController.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="create" id="factory">
+    <h3><span class="num">02</span> Factory <span class="tag t-create">Sáng tạo</span></h3>
+    <p class="lead">Định nghĩa giao diện tạo đối tượng nhưng để nhà máy con quyết định khởi tạo lớp nào — gom toàn bộ logic <code>new</code> về một chỗ.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Encapsulate logic tạo đối tượng, tránh <code>new</code> rải khắp nơi</li>
+      <li>Tạo đối tượng phức tạp tập trung, đảm bảo khởi tạo đúng</li>
+      <li>Hỗ trợ các "product family"; sinh test fixture dễ dàng</li>
+    </ul>
+    <p class="sig">EntityFactory.createUser(...) → UserFactory.create(...)</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/builder/user</code></td><td>Factory + Builder</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/builder/product</code></td><td>Factory + Builder</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/builder/order</code></td><td>Factory + Builder</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/factory/index.ts</code> — registry EntityFactory</li>
+        <li><code>UserFactory.ts</code>, <code>ProductFactory.ts</code>, <code>OrderFactory.ts</code>, <code>PaymentFactory.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="create" id="singleton">
+    <h3><span class="num">03</span> Singleton <span class="tag t-create">Sáng tạo</span></h3>
+    <p class="lead">Đảm bảo một lớp chỉ có đúng một instance và cung cấp điểm truy cập toàn cục tới instance đó.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Cần chính xác một instance: Logger, Config, connection pool, cache</li>
+      <li>Chia sẻ tài nguyên toàn cục, kiểm soát truy cập state chung</li>
+      <li>Lazy initialization — chỉ tạo khi thực sự cần</li>
+    </ul>
+    <p class="warn">Cẩn trọng: lạm dụng gây phụ thuộc ẩn, khó test, state toàn cục.</p>
+    <p class="sig">private constructor() + static getInstance()</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">GET</td><td><code>/patterns/singleton/config</code></td><td>Toàn bộ config</td></tr>
+        <tr><td class="m">GET</td><td><code>/patterns/singleton/logger</code></td><td>Thông tin logger</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/singleton/log</code></td><td>Ghi log</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/singleton/ConfigManager.ts</code>, <code>Logger.ts</code></li>
+        <li><code>SingletonRegistry.ts</code>, <code>routes.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="behave" id="strategy">
+    <h3><span class="num">04</span> Strategy <span class="tag t-behave">Hành vi</span></h3>
+    <p class="lead">Định nghĩa một họ thuật toán, đóng gói từng cái và làm chúng thay thế được — thuật toán biến thiên độc lập với client dùng nó.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Nhiều cách thực hiện cùng một operation (thanh toán: card, PayPal, crypto)</li>
+      <li>Đổi thuật toán lúc runtime, thay chuỗi if/else dài</li>
+      <li>Thêm thuật toán mới không sửa code cũ; test từng cái riêng</li>
+    </ul>
+    <p class="sig">context.setStrategy(new CreditCardStrategy())</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/strategy/checkout</code></td><td>Chọn method qua body</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/strategy/IPaymentStrategy.ts</code> — interface</li>
+        <li><code>strategy.ts</code> — các concrete strategy, <code>routes.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="behave" id="observer">
+    <h3><span class="num">05</span> Observer <span class="tag t-behave">Hành vi</span></h3>
+    <p class="lead">Quan hệ một-nhiều giữa các đối tượng: khi subject đổi trạng thái, mọi observer phụ thuộc được thông báo và cập nhật tự động.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Một sự kiện cần báo cho nhiều hệ thống (email, SMS, Slack)</li>
+      <li>Tách rời producer và consumer của event</li>
+      <li>Thêm/bớt listener động lúc runtime</li>
+    </ul>
+    <p class="sig">subject.attach(o) → subject.notify(type, data)</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/observer/notify</code></td><td>Báo mọi observer</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/observer/simulate</code></td><td>Giả lập event</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/observer/add-observer</code></td><td>Thêm observer</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/observer/interfaces.ts</code>, <code>Subject.ts</code></li>
+        <li><code>observers.ts</code> (Email, Sms, Slack), <code>routes.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="create" id="builder">
+    <h3><span class="num">06</span> Builder <span class="tag t-create">Sáng tạo</span></h3>
+    <p class="lead">Tách quá trình xây dựng đối tượng phức tạp khỏi biểu diễn của nó — cùng một quy trình tạo ra nhiều biểu diễn khác nhau.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Đối tượng nhiều tham số tùy chọn, tránh telescoping constructor</li>
+      <li>Xây dựng từng bước với fluent interface, dễ đọc</li>
+      <li><code>reset()</code> để dùng lại builder; Director điều phối</li>
+    </ul>
+    <p class="sig">new UserBuilder().withEmail(…).withName(…).build()</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/builder/user</code></td><td>Dựng user</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/builder/product</code></td><td>Dựng product</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/builder/order</code></td><td>Dựng order</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/builder/UserBuilder.ts</code>, <code>ProductBuilder.ts</code>, <code>OrderBuilder.ts</code></li>
+        <li><code>BuilderDirector.ts</code> — kết hợp với Factory</li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="struct" id="adapter">
+    <h3><span class="num">07</span> Adapter <span class="tag t-struct">Cấu trúc</span></h3>
+    <p class="lead">Chuyển đổi giao diện của một lớp sang giao diện khác mà client mong đợi — còn gọi là Wrapper.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Tích hợp thư viện bên thứ ba (Stripe SDK, PayPal) không hợp interface</li>
+      <li>Làm việc với legacy code mà không sửa nó</li>
+      <li>MockAdapter cho test; thêm dịch vụ mới tương lai không đụng client</li>
+    </ul>
+    <p class="sig">class StripeAdapter implements IPaymentGateway</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/adapter/mock</code></td><td>Gateway mock</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/adapter/stripe</code></td><td>Qua StripeAdapter</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/adapter/paypal</code></td><td>Qua PayPalAdapter</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/adapter/test</code></td><td>Chọn type qua param</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/adapter/IPaymentGateway.ts</code> — target interface</li>
+        <li><code>adapters.ts</code> (Stripe, PayPal, Mock), <code>routes.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="struct" id="decorator">
+    <h3><span class="num">08</span> Decorator <span class="tag t-struct">Cấu trúc</span></h3>
+    <p class="lead">Gắn thêm trách nhiệm cho đối tượng một cách động — thay thế linh hoạt cho việc subclassing khi mở rộng chức năng.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Thêm hành vi (logging, caching, metrics) không sửa lớp gốc</li>
+      <li>Xếp chồng nhiều hành vi lúc runtime, đổi thứ tự tùy ý</li>
+      <li>Tránh "class explosion" của đa kế thừa; client thấy cùng một interface</li>
+    </ul>
+    <p class="sig">new MetricsDecorator(new LoggingDecorator(new CachingDecorator(repo)))</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">GET</td><td><code>/patterns/decorator/user/:id</code></td><td>User qua chuỗi decorator</td></tr>
+        <tr><td class="m">GET</td><td><code>/patterns/decorator/metrics</code></td><td>Số liệu từ decorator</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/decorator/IUser.ts</code>, <code>BaseDecorator.ts</code></li>
+        <li><code>decorators.ts</code>, <code>routes.ts</code>, <code>repo-factory.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="system" id="cqrs">
+    <h3><span class="num">09</span> CQRS <span class="tag t-system">Hệ thống</span></h3>
+    <p class="lead">Phân tách trách nhiệm: command (ghi) đi một đường, query (đọc) đi một đường, dùng mô hình dữ liệu riêng cho mỗi bên.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Tách hẳn concern đọc và ghi</li>
+      <li>Tối ưu và scale đọc / ghi độc lập với nhau</li>
+      <li>Command bất biến, không trả giá trị; Query có trả dữ liệu, không side-effect</li>
+    </ul>
+    <p class="sig">commandBus.dispatch(new CreateUserCommand(…)) · queryBus.dispatch(new GetUserByIdQuery(id))</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/cqrs/command</code></td><td>Thực thi command</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/cqrs/query</code></td><td>Thực thi query</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/cqrs/CommandBus.ts</code>, <code>QueryBus.ts</code></li>
+        <li><code>commands.ts</code>, <code>queries.ts</code>, <code>routes.ts</code></li>
+      </ul>
+    </details>
+  </article>
+
+  <article class="card" data-group="system" id="circuit-breaker">
+    <h3><span class="num">10</span> Circuit Breaker <span class="tag t-system">Hệ thống</span></h3>
+    <p class="lead">Ngăn thất bại dây chuyền (cascading failure) bằng cách tạm ngưng gọi dịch vụ đang lỗi, cho nó thời gian hồi phục.</p>
+    <p class="k">Vấn đề giải quyết</p>
+    <ul>
+      <li>Dịch vụ chậm/chết kéo ứng dụng của bạn chết theo</li>
+      <li>Quá nhiều request lỗi đè thêm lên dịch vụ đang gặp nạn</li>
+      <li>Cần graceful degradation: fallback khi service unavailable</li>
+    </ul>
+    <p class="sig">breaker.execute(() =&gt; externalService.call())</p>
+    <details>
+      <summary>Endpoint &amp; file</summary>
+      <div class="tablewrap"><table>
+        <tr><th>Method</th><th>Endpoint</th><th>Mô tả</th></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/circuit-breaker/safe-payment</code></td><td>Gọi payment có bảo vệ</td></tr>
+        <tr><td class="m">GET</td><td><code>/patterns/circuit-breaker/state</code></td><td>Trạng thái mạch</td></tr>
+        <tr><td class="m">POST</td><td><code>/patterns/circuit-breaker/reset</code></td><td>Reset thủ công</td></tr>
+      </table></div>
+      <ul>
+        <li><code>src/patterns/circuit-breaker/CircuitBreaker.ts</code>, <code>routes.ts</code></li>
+        <li><code>src/shared/errors.ts</code> — CircuitBreakerOpenError</li>
+      </ul>
+    </details>
+  </article>
+
+</div>
+
+<h2>Tra nhanh: gặp vấn đề này thì dùng gì?</h2>
+<p class="sub">Ánh xạ từ triệu chứng trong code sang pattern phù hợp — dựa trên chính các ví dụ đã cài đặt trong dự án.</p>
+<div class="tablewrap"><table>
+  <thead><tr><th>Triệu chứng</th><th></th><th>Pattern</th></tr></thead>
+  <tbody>
+    <tr><td><code>new</code> rải rác, khởi tạo phức tạp</td><td class="arrow">→</td><td class="p">Factory</td></tr>
+    <tr><td>Constructor phình to vì quá nhiều tham số tùy chọn</td><td class="arrow">→</td><td class="p">Builder</td></tr>
+    <tr><td>Logger / Config / pool cần dùng chung toàn cục</td><td class="arrow">→</td><td class="p">Singleton</td></tr>
+    <tr><td>Chuỗi if/else chọn cách xử lý theo loại</td><td class="arrow">→</td><td class="p">Strategy</td></tr>
+    <tr><td>Một sự kiện, nhiều hệ thống phải nhận tin</td><td class="arrow">→</td><td class="p">Observer</td></tr>
+    <tr><td>SDK bên thứ ba có interface lệch với code của bạn</td><td class="arrow">→</td><td class="p">Adapter</td></tr>
+    <tr><td>Muốn thêm logging/cache/metrics mà không sửa source</td><td class="arrow">→</td><td class="p">Decorator</td></tr>
+    <tr><td>Domain logic dính chặt query Prisma/SQL</td><td class="arrow">→</td><td class="p">Repository</td></tr>
+    <tr><td>Tải đọc và tải ghi cần scale khác nhau</td><td class="arrow">→</td><td class="p">CQRS</td></tr>
+    <tr><td>Dịch vụ ngoài hay lỗi, kéo cả hệ thống chết theo</td><td class="arrow">→</td><td class="p">Circuit Breaker</td></tr>
+  </tbody>
+</table></div>
+
+<h2>Circuit Breaker: máy trạng thái</h2>
+<p class="sub">Pattern phụ thuộc-ngoài đáng nhớ nhất trong bộ tài liệu — vòng đời ba trạng thái chạy trong <code>CircuitBreaker.execute()</code>.</p>
+<div class="split">
+  <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+    direction LR
+    CLOSED: Bình thường, gọi qua
+    OPEN: Chặn request, dùng fallback
+    HALF_OPEN: Thả 1 gọi thử
+    CLOSED --> OPEN: Đủ failureThreshold
+    OPEN --> HALF_OPEN: Hết resetTimeout
+    HALF_OPEN --> CLOSED: Gọi thử thành công
+    HALF_OPEN --> OPEN: Gọi thử thất bại
+  </pre></div>
+  <div class="cfg"><table>
+    <thead><tr><th>Thông số</th><th>Khuyến nghị</th><th>Ý nghĩa</th></tr></thead>
+    <tbody>
+      <tr><td><code>failureThreshold</code></td><td>3–5</td><td>Số lỗi liên tiếp trước khi mở mạch</td></tr>
+      <tr><td><code>resetTimeout</code></td><td>10–60s</td><td>Thời gian mạch mở trước khi thử lại</td></tr>
+      <tr><td><code>timeout</code></td><td>3–5s</td><td>Chờ tối đa cho mỗi cuộc gọi</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<footer class="foot">
+  Tổng hợp từ <code>docs/patterns/01-repository.md</code> … <code>10-circuit-breaker.md</code> · Mã nguồn mẫu: <code>src/patterns/</code>
+</footer>
+</div>
+
+<script>
+(function(){
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip[data-group]'));
+  function apply(group){
+    cards.forEach(function(c){ c.hidden = (group !== 'all' && c.dataset.group !== group); });
+    chips.forEach(function(ch){ ch.setAttribute('aria-pressed', String(ch.dataset.group === group)); });
+  }
+  chips.forEach(function(ch){
+    ch.addEventListener('click', function(){
+      apply(ch.dataset.group);
+      try { localStorage.setItem('dp-group', ch.dataset.group); } catch(e){}
+    });
+  });
+  var saved = 'all';
+  try { saved = localStorage.getItem('dp-group') || 'all'; } catch(e){}
+  if (saved !== 'all') apply(saved);
+
+  var btn = document.getElementById('toggleAll');
+  var allOpen = false;
+  btn.addEventListener('click', function(){
+    allOpen = !allOpen;
+    document.querySelectorAll('details').forEach(function(d){ d.open = allOpen; });
+    btn.textContent = allOpen ? 'Đóng hết chi tiết' : 'Mở hết chi tiết';
+  });
+
+  function jump(){
+    var id = location.hash.slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (el) { var d = el.querySelector('details'); if (d) d.open = true; el.scrollIntoView({block:'start'}); }
+  }
+  window.addEventListener('hashchange', jump);
+  jump();
+})();
+</script>
