@@ -4,7 +4,7 @@ import { PaymentRepository } from "../../patterns/repository/PaymentRepository";
 import { CreatePaymentDto, PaymentResponse, PaymentStatus } from "./dto";
 import { PaymentContext, CreditCardStrategy, PayPalStrategy, CryptoStrategy } from "../../patterns/strategy/strategy";
 import { CircuitBreaker } from "../../patterns/circuit-breaker/CircuitBreaker";
-import { IPaymentGateway, PaymentGatewayResult, MockAdapter } from "../../patterns/adapter/adapters";
+import { PaymentGatewayResult, MockAdapter } from "../../patterns/adapter/adapters";
 
 const paymentRepository = new PaymentRepository(prisma);
 const mockGateway = new MockAdapter();
