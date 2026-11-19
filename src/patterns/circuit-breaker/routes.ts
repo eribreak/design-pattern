@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { CircuitBreaker, CircuitState } from "./CircuitBreaker";
+import { CircuitBreaker } from "./CircuitBreaker";
 
 const router = Router();
 
 // Demo Circuit Breaker that wraps simulated external service calls
 class ExternalPaymentService {
-  async processPayment(amount: number): Promise<{ success: boolean; transactionId?: string }> {
+  async processPayment(_amount: number): Promise<{ success: boolean; transactionId?: string }> {
     // Simulate random failures
     const success = Math.random() > 0.3;
     await new Promise(resolve => setTimeout(resolve, 100));

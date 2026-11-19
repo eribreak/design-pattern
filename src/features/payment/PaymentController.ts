@@ -55,7 +55,7 @@ export class PaymentController {
       let result: PaymentGatewayResult;
       try {
         result = await paymentCircuitBreaker.execute(() => mockGateway.charge(amount));
-      } catch (error) {
+      } catch (_error) {
         res.status(503).json({ success: false, error: "Payment service unavailable" });
         return;
       }

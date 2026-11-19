@@ -2,7 +2,7 @@ import { IPaymentGateway, PaymentGatewayResult } from "./IPaymentGateway";
 
 // StripeAdapter - simplified adapter for Stripe-like API
 export class StripeAdapter implements IPaymentGateway {
-  async charge(amount: number, data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
+  async charge(_amount: number, _data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 80));
     return {
       success: true,
@@ -11,7 +11,7 @@ export class StripeAdapter implements IPaymentGateway {
     };
   }
 
-  async refund(transactionId: string): Promise<PaymentGatewayResult> {
+  async refund(_transactionId: string): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 80));
     return {
       success: true,
@@ -27,7 +27,7 @@ export class StripeAdapter implements IPaymentGateway {
 
 // PayPalAdapter - for PayPal
 export class PayPalAdapter implements IPaymentGateway {
-  async charge(amount: number, data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
+  async charge(_amount: number, _data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 100));
     return {
       success: true,
@@ -36,7 +36,7 @@ export class PayPalAdapter implements IPaymentGateway {
     };
   }
 
-  async refund(transactionId: string): Promise<PaymentGatewayResult> {
+  async refund(_transactionId: string): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 100));
     return {
       success: true,
@@ -52,7 +52,7 @@ export class PayPalAdapter implements IPaymentGateway {
 
 // CryptoAdapter - for cryptocurrency
 export class CryptoAdapter implements IPaymentGateway {
-  async charge(amount: number, data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
+  async charge(_amount: number, _data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 150));
     return {
       success: true,
@@ -61,7 +61,7 @@ export class CryptoAdapter implements IPaymentGateway {
     };
   }
 
-  async refund(transactionId: string): Promise<PaymentGatewayResult> {
+  async refund(_transactionId: string): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 150));
     return {
       success: true,
@@ -77,7 +77,7 @@ export class CryptoAdapter implements IPaymentGateway {
 
 // MockAdapter - for testing/development
 export class MockAdapter implements IPaymentGateway {
-  async charge(amount: number, data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
+  async charge(_amount: number, _data?: Record<string, unknown>): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 20));
     return {
       success: true,
@@ -86,7 +86,7 @@ export class MockAdapter implements IPaymentGateway {
     };
   }
 
-  async refund(transactionId: string): Promise<PaymentGatewayResult> {
+  async refund(_transactionId: string): Promise<PaymentGatewayResult> {
     await new Promise(resolve => setTimeout(resolve, 20));
     return {
       success: true,

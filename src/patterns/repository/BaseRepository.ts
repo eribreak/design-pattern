@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 
-export abstract class BaseRepository<T extends Prisma.ModelName> {
+export abstract class BaseRepository<_T extends Prisma.ModelName> {
   protected readonly prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
