@@ -29,6 +29,7 @@ prisma/generated/
 .docker/
 
 # Editor & IDE
+.claude/*
 .vscode/*
 !.vscode/launch.json
 !.vscode/extensions.json
