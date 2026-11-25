@@ -26,6 +26,7 @@ export class StrategyController {
 
       const context = new PaymentContext();
 
+      let validMethod = true;
       switch (method) {
         case "CREDIT_CARD":
           context.setStrategy(new CreditCardStrategy());
@@ -37,7 +38,11 @@ export class StrategyController {
           context.setStrategy(new CryptoStrategy());
           break;
         default:
-          context.setStrategy(new CreditCardStrategy());
+          validMethod = false;
+      }
+      if (!validMethod) {
+        res.status(400).json({ success: false, error: "Invalid payment method" });
+        return;
       }
 
       const result = await context.pay(amount);

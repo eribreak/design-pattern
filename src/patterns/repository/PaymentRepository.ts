@@ -27,6 +27,13 @@ export class PaymentRepository implements IPaymentRepository {
   }
 
   async create(data: { userId: number; orderId: number | null; amount: number; method: string }): Promise<Payment> {
+    // Validate orderId exists if provided (FK constraint)
+    if (data.orderId !== null) {
+      const order = await this.prisma.order.findUnique({ where: { id: data.orderId } });
+      if (!order) {
+        throw new Error(`Order with id ${data.orderId} not found`);
+      }
+    }
     return this.prisma.payment.create({ data });
   }
 

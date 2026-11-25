@@ -8,7 +8,10 @@ const director = new BuilderDirector();
 export class BuilderController {
   async buildUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = director.buildUser("builder@example.com", "Builder User", 30);
+      const email = req.body.email || `builder-${Date.now()}@test.com`;
+      const name = req.body.name || "Builder User";
+      const age = req.body.age || 30;
+      const user = director.buildUser(email, name, age);
       // Save to DB
       const createdUser = await prisma.user.create({ data: user });
       res.json({
