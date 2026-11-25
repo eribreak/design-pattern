@@ -28,7 +28,7 @@ const circuitBreaker = new CircuitBreaker<{ success: boolean; transactionId?: st
 });
 
 export class CircuitBreakerController {
-  async safePayment(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async safePayment(req: Request, res: Response, _next: NextFunction): Promise<void> {
     try {
       const { amount = 100 } = req.body;
       const result = await circuitBreaker.execute(() => service.processPayment(amount));
@@ -39,16 +39,24 @@ export class CircuitBreakerController {
         circuitState: circuitBreaker.getState(),
         failureCount: circuitBreaker.getFailureCount(),
       });
-    } catch (error: any) {
-      if (error.message?.includes("Circuit breaker is OPEN")) {
+    } catch (error: unknown) {
+      const err = error as Error;
+      if (err.message?.includes("Circuit breaker is OPEN")) {
         res.status(503).json({
           success: false,
-          error: error.message,
+          error: err.message,
           circuitState: circuitBreaker.getState(),
         });
         return;
       }
-      next(error);
+      // Fallback for external service failures
+      res.json({
+        success: false,
+        data: null,
+        circuitState: circuitBreaker.getState(),
+        failureCount: circuitBreaker.getFailureCount(),
+        note: "Fallback due to external service error",
+      });
     }
   }
 

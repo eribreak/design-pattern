@@ -52,6 +52,16 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async delete(id: number): Promise<void> {
-    await this.prisma.order.delete({ where: { id } });
+    try {
+      // First delete order items (FK constraint)
+      await this.prisma.orderItem.deleteMany({ where: { orderId: id } });
+      // Then delete the order
+      await this.prisma.order.delete({ where: { id } });
+    } catch (error) {
+      if ((error as any).code === "P2025") {
+        throw new Error("Order does not exist");
+      }
+      throw error;
+    }
   }
 }

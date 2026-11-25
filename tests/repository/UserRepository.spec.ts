@@ -16,16 +16,18 @@ describe("UserRepository", () => {
     repository = new UserRepository(prisma);
   });
 
+  const uniqueEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,8)}@test.com`;
+
   describe("create", () => {
     it("should create a user", async () => {
       const user = await repository.create({
-        email: "test@example.com",
+        email: uniqueEmail("create"),
         name: "Test User",
         age: 25,
       });
 
       expect(user.id).toBeDefined();
-      expect(user.email).toBe("test@example.com");
+      expect(user.email).toContain("@test.com");
       expect(user.name).toBe("Test User");
       expect(user.age).toBe(25);
     });
@@ -34,7 +36,7 @@ describe("UserRepository", () => {
   describe("findById", () => {
     it("should find a user by id", async () => {
       const created = await repository.create({
-        email: "find@example.com",
+        email: uniqueEmail("find"),
         name: "Find User",
         age: 30,
       });
@@ -42,7 +44,7 @@ describe("UserRepository", () => {
       const user = await repository.findById(created.id);
 
       expect(user).not.toBeNull();
-      expect(user?.email).toBe("find@example.com");
+      expect(user?.email).toBe(created.email);
     });
 
     it("should return null for non-existent user", async () => {
@@ -53,13 +55,14 @@ describe("UserRepository", () => {
 
   describe("findByEmail", () => {
     it("should find a user by email", async () => {
+      const email = uniqueEmail("emailtest");
       await repository.create({
-        email: "emailtest@example.com",
+        email,
         name: "Email Test",
         age: 28,
       });
 
-      const user = await repository.findByEmail("emailtest@example.com");
+      const user = await repository.findByEmail(email);
 
       expect(user).not.toBeNull();
       expect(user?.name).toBe("Email Test");
@@ -69,7 +72,7 @@ describe("UserRepository", () => {
   describe("update", () => {
     it("should update a user", async () => {
       const created = await repository.create({
-        email: "update@example.com",
+        email: uniqueEmail("update"),
         name: "Original Name",
         age: 20,
       });
@@ -84,7 +87,7 @@ describe("UserRepository", () => {
   describe("delete", () => {
     it("should delete a user", async () => {
       const created = await repository.create({
-        email: "delete@example.com",
+        email: uniqueEmail("delete"),
         name: "To Delete",
         age: 35,
       });
